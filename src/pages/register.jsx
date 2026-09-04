@@ -8,7 +8,7 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  function handleRegister(e) {
+  async function handleRegister(e) {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -16,11 +16,31 @@ function Register() {
       return;
     }
 
-    console.log("Register:", {
-      name,
-      email,
-      password,
-    });
+    try {
+      const response = await fetch("http://localhost:5000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      alert(data.message);
+
+    } catch (error) {
+      alert("Something went wrong.");
+    }
   }
 
   return (
