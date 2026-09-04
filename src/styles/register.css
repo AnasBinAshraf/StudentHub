@@ -1,0 +1,82 @@
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f9fafb;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.register-box {
+  width: 400px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.register-box h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.register-subtitle {
+  margin: 8px 0 25px;
+  color: #6b7280;
+}
+
+.register-box form {
+  display: flex;
+  flex-direction: column;
+}
+
+.register-box label {
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.register-box input {
+  padding: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.register-box input:focus {
+  border-color: #6b7280;
+}
+
+.register-box button {
+  padding: 12px;
+  margin-top: 4px;
+  border: none;
+  border-radius: 8px;
+  background: #111827;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.register-box button:hover {
+  background: #1f2937;
+}
+
+.login-link {
+  text-align: center;
+  margin: 20px 0 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.login-link a {
+  color: #111827;
+  font-weight: 600;
+  text-decoration: none;
+}

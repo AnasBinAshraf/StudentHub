@@ -1,0 +1,127 @@
+.analytics-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.analytics-header {
+  margin-bottom: 30px;
+}
+
+.analytics-greeting {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.analytics-header h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.analytics-subtitle {
+  margin: 8px 0 0;
+  color: #6b7280;
+}
+
+.analytics-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.analytics-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 22px;
+}
+
+.analytics-card span {
+  display: block;
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.analytics-card strong {
+  font-size: 28px;
+}
+
+.analytics-section {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.analytics-section h2 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+.priority-row {
+  margin-bottom: 20px;
+}
+
+.priority-row > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.priority-row span {
+  color: #4b5563;
+}
+
+.priority-row strong {
+  font-size: 14px;
+}
+
+.bar {
+  height: 10px;
+  background: #f3f4f6;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 10px;
+}
+
+.high-bar {
+  background: #ef4444;
+}
+
+.medium-bar {
+  background: #f59e0b;
+}
+
+.low-bar {
+  background: #22c55e;
+}
+
+.analytics-section p {
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.insight {
+  padding: 14px 0;
+  border-top: 1px solid #eee;
+}
+
+.insight:first-of-type {
+  border-top: none;
+}
+
+.insight h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.insight p {
+  margin: 0;
+}

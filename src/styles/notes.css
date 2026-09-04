@@ -1,0 +1,162 @@
+.notes-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.notes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.notes-greeting {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.notes-header h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.notes-subtitle {
+  margin: 8px 0 0;
+  color: #6b7280;
+}
+
+.add-note-button {
+  padding: 11px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #111827;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.notes-toolbar {
+  margin-bottom: 24px;
+}
+
+.notes-toolbar input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.note-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+}
+
+.note-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.note-card h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.delete-note {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.note-content {
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 15px 0;
+}
+
+.note-date {
+  margin-top: auto;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.empty-notes {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 50px;
+  color: #6b7280;
+}
+
+.note-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.note-modal {
+  width: 450px;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.note-modal h2 {
+  margin-top: 0;
+}
+
+.note-modal input,
+.note-modal textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+.note-modal textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.note-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.note-modal-actions button {
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cancel-note {
+  border: 1px solid #d1d5db;
+  background: white;
+}
+
+.save-note {
+  border: none;
+  background: #111827;
+  color: white;
+}
