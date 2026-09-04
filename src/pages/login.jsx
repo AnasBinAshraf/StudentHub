@@ -3,13 +3,38 @@ import { Link } from "react-router-dom";
 import "../styles/login.css";
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-  function handleLogin(e) {
+    async function handleLogin(e) {
     e.preventDefault();
 
-    console.log("Login:", email, password);
+    try {
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+
+      alert(data.message);
+
+    } catch (error) {
+      alert("Something went wrong.");
+    }
   }
 
   return (
