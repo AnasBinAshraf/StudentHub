@@ -1,66 +1,45 @@
-import './App.css'
+import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Landing from "./pages/landing";
+import Login from "./pages/login";
+import Register from "./pages/register";
+import Dashboard from "./pages/dashboard";
+import Tasks from "./pages/tasks";
+import Calendar from "./pages/calendar";
+import Notes from "./pages/notes";
+import Analytics from "./pages/analytics";
+
+import DashboardLayout from "./components/dashboardlayout";
 
 function App() {
   return (
-    <main>
-      <header className="navbar">
-        <a className="logo" href="/">
-          StudentHub
-        </a>
+    <BrowserRouter>
+      <Routes>
 
-        <nav>
-          <a href="#features">Features</a>
-          <a className="login-link" href="#login">
-            Log in
-          </a>
-          <a className="primary-button" href="#register">
-            Get started
-          </a>
-        </nav>
-      </header>
+        <Route path="/" element={<Landing />} />
 
-      <section className="hero">
-        <p className="eyebrow">STUDENT PRODUCTIVITY, SIMPLIFIED</p>
+        <Route path="/login" element={<Login />} />
 
-        <h1>
-          Stay organized.
-          <br />
-          Make progress.
-        </h1>
+        <Route path="/register" element={<Register />} />
 
-        <p className="hero-text">
-          StudentHub helps you manage tasks, keep notes, and track your academic
-          progress in one place.
-        </p>
+        <Route element={<DashboardLayout />}>
 
-        <div className="hero-actions">
-          <a className="primary-button" href="#register">
-            Create your account
-          </a>
-          <a className="secondary-button" href="#features">
-            Explore features
-          </a>
-        </div>
-      </section>
+        <Route path="/dashboard" element={<Dashboard />} />
 
-      <section id="features" className="features">
-        <article>
-          <h2>Tasks</h2>
-          <p>Create tasks, set priorities and deadlines, and track completion.</p>
-        </article>
+        <Route path="/tasks" element={<Tasks />} />
 
-        <article>
-          <h2>Notes</h2>
-          <p>Keep study notes organized and easy to find when you need them.</p>
-        </article>
+        <Route path="/calendar" element={<Calendar />} />
 
-        <article>
-          <h2>Dashboard</h2>
-          <p>See your progress, pending tasks, and overdue work at a glance.</p>
-        </article>
-      </section>
-    </main>
-  )
+        <Route path="/notes" element={<Notes />} />
+
+        <Route path="/analytics" element={<Analytics />} />
+
+        </Route>
+
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
