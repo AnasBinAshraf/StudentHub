@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "../styles/dashboard.css";
 
 import StatCard from "../components/statcard";
@@ -6,6 +7,112 @@ import ProgressCard from "../components/progresscard";
 import DeadlineItem from "../components/deadlineitem";
 
 function Dashboard() {
+  const [tasks, setTasks] = useState([]);
+  const [notes, setNotes] = useState([]);
+
+  useEffect(() => {
+    getTasks();
+  }, []);
+
+  async function getTasks() {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:5000/tasks", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      setTasks(data);
+    } catch (error) {
+      console.log(error);
+      alert("Failed to load tasks");
+    }
+  }
+
+  useEffect(() => {
+    getNotes();
+  }, []);
+
+  async function getNotes() {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:5000/notes", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      setNotes(data);
+    } catch (error) {
+      console.log(error);
+      alert("Failed to load notes");
+    }
+  }
+
+  const totalTasks = tasks.length;
+
+  const completedTasks = tasks.filter(
+    (task) => task.completed
+  ).length;
+
+  const pendingTasks = totalTasks - completedTasks;
+
+  const completionRate =
+    totalTasks === 0
+      ? 0
+      : Math.round((completedTasks / totalTasks) * 100);
+
+  function getDaysRemaining(dueDate) {
+    const today = new Date();
+    const due = new Date(dueDate);
+
+    today.setHours(0, 0, 0, 0);
+    due.setHours(0, 0, 0, 0);
+
+    const difference = due - today;
+
+    return Math.ceil(difference / (1000 * 60 * 60 * 24));
+  }
+
+  function formatDate(date) {
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+    });
+  }
+
+  const totalNotes = notes.length;
+
+  const today = new Date();
+
+  const todayDate =
+    today.getFullYear() +
+    "-" +
+    String(today.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(today.getDate()).padStart(2, "0");
+
+  const todayTasks = tasks.filter(
+    (task) => task.dueDate === todayDate
+  );
+
   return (
     <div className="dashboard-page">
 
@@ -25,10 +132,6 @@ function Dashboard() {
           </p>
         </div>
 
-        <button className="add-task-button">
-          + Add Task
-        </button>
-
       </header>
 
 
@@ -38,26 +141,26 @@ function Dashboard() {
 
         <StatCard
           title="Today's Tasks"
-          value="8"
-          subtitle="3 completed"
+          value={totalTasks}
+          subtitle={`${completedTasks} completed`}
         />
 
         <StatCard
           title="Upcoming"
-          value="5"
-          subtitle="Due this week"
+          value={pendingTasks}
+          subtitle="Pending tasks"
         />
 
         <StatCard
           title="Notes"
-          value="24"
+          value={totalNotes}
           subtitle="Total notes"
         />
 
         <StatCard
           title="Productivity"
-          value="78%"
-          subtitle="↑ 12% this week"
+          value={`${completionRate}%`}
+          subtitle="Task completion"
         />
 
       </section>
@@ -86,20 +189,17 @@ function Dashboard() {
           </div>
 
 
-          <TaskItem
-            title="Complete Machine Learning assignment"
-            details="Due today · High priority"
-          />
-
-          <TaskItem
-            title="Review Computer Networks notes"
-            details="Due today · Medium priority"
-          />
-
-          <TaskItem
-            title="Practice DAA problems"
-            details="Due tomorrow · Low priority"
-          />
+          {todayTasks.length === 0 ? (
+            <p>No tasks due today. You're all caught up! 🎉</p>
+          ) : (
+            todayTasks.slice(0, 3).map((task) => (
+              <TaskItem
+                key={task._id}
+                title={task.title}
+                details={`Due today · ${task.priority} priority`}
+              />
+            ))
+          )}
 
         </div>
 
@@ -132,23 +232,19 @@ function Dashboard() {
 
         <div className="deadline-list">
 
-          <DeadlineItem
-            title="AI/ML Project Report"
-            date="September 8"
-            days="4 days"
-          />
-
-          <DeadlineItem
-            title="Database Assignment"
-            date="September 11"
-            days="7 days"
-          />
-
-          <DeadlineItem
-            title="DAA Internal Test"
-            date="September 15"
-            days="11 days"
-          />
+          {tasks
+            .filter((task) => !task.completed && task.dueDate)
+            .slice(0, 3)
+            .map((task) => (
+              <DeadlineItem
+                key={task._id}
+                title={task.title}
+                date={formatDate(task.dueDate)}
+                days={`${getDaysRemaining(task.dueDate)}${
+                  getDaysRemaining(task.dueDate) === 1 ? "day" : "days"
+                }`}
+              />
+            ))}
 
         </div>
 

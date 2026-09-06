@@ -1,33 +1,38 @@
+import { useEffect, useState } from "react";
 import "../styles/analytics.css";
 
 function Analytics() {
-  const tasks = [
-    {
-      title: "Machine Learning Assignment",
-      priority: "High",
-      completed: true,
-    },
-    {
-      title: "Computer Networks Notes",
-      priority: "Medium",
-      completed: true,
-    },
-    {
-      title: "DAA Problems",
-      priority: "High",
-      completed: false,
-    },
-    {
-      title: "Database Assignment",
-      priority: "Low",
-      completed: false,
-    },
-    {
-      title: "AI Lab Work",
-      priority: "Medium",
-      completed: true,
-    },
-  ];
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    getTasks();
+  }, []);
+
+  async function getTasks() {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:5000/tasks", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      setTasks(data);
+
+    } 
+    catch (error) {
+      console.log(error);
+      alert("Failed to load tasks");
+    }
+  }
 
   const totalTasks = tasks.length;
 
@@ -53,6 +58,7 @@ function Analytics() {
   const lowTasks = tasks.filter(
     (task) => task.priority === "Low"
   ).length;
+
 
   return (
     <div className="analytics-page">
@@ -113,7 +119,7 @@ function Analytics() {
               <div
                 className="bar-fill high-bar"
                 style={{
-                  width: `${(highTasks / totalTasks) * 100}%`,
+                  width: totalTasks === 0 ? "0%" : `${(highTasks / totalTasks) * 100}%`,
                 }}
               />
             </div>
@@ -130,7 +136,7 @@ function Analytics() {
               <div
                 className="bar-fill medium-bar"
                 style={{
-                  width: `${(mediumTasks / totalTasks) * 100}%`,
+                 width: totalTasks === 0 ? "0%" : `${(mediumTasks / totalTasks) * 100}%`,
                 }}
               />
             </div>
@@ -147,7 +153,7 @@ function Analytics() {
               <div
                 className="bar-fill low-bar"
                 style={{
-                  width: `${(lowTasks / totalTasks) * 100}%`,
+                  width: totalTasks === 0 ? "0%" : `${(lowTasks / totalTasks) * 100}%`,
                 }}
               />
             </div>
