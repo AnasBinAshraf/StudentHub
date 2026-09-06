@@ -2,6 +2,7 @@ const indexRouter = require("./routes/index");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const tasksRouter = require("./routes/tasks");
 require("dotenv").config();
 
 const app = express();
@@ -9,6 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/", indexRouter);
+app.use("/tasks", tasksRouter);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(function () {

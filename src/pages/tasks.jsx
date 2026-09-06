@@ -1,33 +1,9 @@
-import { useState } from "react";
+import {useEffect, useState } from "react";
 import "../styles/tasks.css";
 
 function Tasks() {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "Complete Machine Learning assignment",
-      description: "Finish the pending questions and submit the assignment.",
-      priority: "High",
-      dueDate: "September 8",
-      completed: false,
-    },
-    {
-      id: 2,
-      title: "Review Computer Networks notes",
-      description: "Revise Unit 2 before the next class.",
-      priority: "Medium",
-      dueDate: "September 9",
-      completed: false,
-    },
-    {
-      id: 3,
-      title: "Practice DAA problems",
-      description: "Solve 5 problems on dynamic programming.",
-      priority: "Low",
-      dueDate: "September 10",
-      completed: true,
-    },
-  ]);
+  
+  const [tasks, setTasks] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
   const [newTask, setNewTask] = useState({
@@ -43,19 +19,118 @@ function Tasks() {
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
 
-  function toggleTask(id) {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id
-          ? { ...task, completed: !task.completed }
-          : task
-      )
-    );
+  useEffect(() => {
+  getTasks();
+}, []);
+
+async function getTasks() {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch("http://localhost:5000/tasks", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message);
+      return;
+    }
+
+    const formattedTasks = data.map((task) => ({
+      ...task,
+      id: task._id,
+    }));
+
+    setTasks(formattedTasks);
+
+  } catch (error) {
+    console.log(error);
+    alert("Failed to load tasks");
+  }
+}
+
+  async function toggleTask(id) {
+  const task = tasks.find((task) => task.id === id);
+
+  if (!task) {
+    return;
   }
 
-  function deleteTask(id) {
-    setTasks(tasks.filter((task) => task.id !== id));
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `http://localhost:5000/tasks/${task.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          completed: !task.completed,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message);
+      return;
+    }
+
+    const updatedTask = {
+      ...data.task,
+      id: data.task._id,
+    };
+
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? updatedTask : task
+      )
+    );
+
+  } catch (error) {
+    console.log(error);
+    alert("Failed to update task");
   }
+}
+
+  async function deleteTask(id) {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(
+      `http://localhost:5000/tasks/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message);
+      return;
+    }
+
+    setTasks(
+      tasks.filter((task) => task.id !== id)
+    );
+
+  } catch (error) {
+    console.log(error);
+    alert("Failed to delete task");
+  }
+}
 
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch = task.title
@@ -71,31 +146,57 @@ function Tasks() {
     return matchesSearch && matchesFilter;
   });
 
-  function addTask() {
+  async function addTask() {
   if (!newTask.title.trim()) {
     return;
   }
 
-  const task = {
-    id: Date.now(),
-    title: newTask.title,
-    description: newTask.description,
-    dueDate: newTask.dueDate,
-    priority: newTask.priority,
-    completed: false,
-  };
+  try {
+    const token = localStorage.getItem("token");
 
-  setTasks([...tasks, task]);
+    const response = await fetch("http://localhost:5000/tasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        title: newTask.title,
+        description: newTask.description,
+        dueDate: newTask.dueDate,
+        priority: newTask.priority,
+      }),
+    });
 
-  setNewTask({
-    title: "",
-    description: "",
-    dueDate: "",
-    priority: "Medium",
-  });
+    const data = await response.json();
 
-  setShowModal(false);
+    if (!response.ok) {
+      alert(data.message);
+      return;
+    }
+
+    const task = {
+      ...data.task,
+      id: data.task._id,
+    };
+
+    setTasks([...tasks, task]);
+
+    setNewTask({
+      title: "",
+      description: "",
+      dueDate: "",
+      priority: "Medium",
+    });
+
+    setShowModal(false);
+
+  } catch (error) {
+    console.log(error);
+    alert("Failed to add task");
+  }
 }
+
 function openEditModal(task) {
   setEditingTask({
     ...task,
@@ -103,22 +204,61 @@ function openEditModal(task) {
 
   setShowEditModal(true);
 }
-function updateTask() {
+
+  async function updateTask() {
   if (!editingTask.title.trim()) {
     return;
   }
 
-  setTasks(
-    tasks.map((task) =>
-      task.id === editingTask.id
-        ? editingTask
-        : task
-    )
-  );
+  try {
+    const token = localStorage.getItem("token");
 
-  setShowEditModal(false);
-  setEditingTask(null);
+    const response = await fetch(
+      `http://localhost:5000/tasks/${editingTask.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: editingTask.title,
+          description: editingTask.description,
+          dueDate: editingTask.dueDate,
+          priority: editingTask.priority,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message);
+      return;
+    }
+
+    const updatedTask = {
+      ...data.task,
+      id: data.task._id,
+    };
+
+    setTasks(
+      tasks.map((task) =>
+        task.id === editingTask.id
+          ? updatedTask
+          : task
+      )
+    );
+
+    setShowEditModal(false);
+    setEditingTask(null);
+
+  } catch (error) {
+    console.log(error);
+    alert("Failed to update task");
+  }
 }
+
   return (
     <div className="tasks-page">
 
