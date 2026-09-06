@@ -29,6 +29,7 @@ function Login() {
       }
 
       localStorage.setItem("token", data.token);
+      window.location.href = "/dashboard";
 
       alert(data.message);
 

@@ -33,7 +33,15 @@ function Sidebar() {
       </nav>
 
       <div className="sidebar-bottom">
-        <button>Logout</button>
+        <button
+          className="logout-button"
+          onClick={() => {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+          }}
+        >
+          Logout
+        </button>
       </div>
 
     </aside>
