@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/calendar.css";
 
 function Calendar() {
@@ -6,24 +6,41 @@ function Calendar() {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const tasks = [
-    {
-      title: "Machine Learning Assignment",
-      date: "2026-09-08",
-      priority: "High",
-    },
-    {
-      title: "Database Assignment",
-      date: "2026-09-11",
-      priority: "Medium",
-    },
-    {
-      title: "DAA Internal Test",
-      date: "2026-09-15",
-      priority: "High",
-    },
-  ];
+  const [tasks, setTasks] = useState([]);
 
+  useEffect(() => {
+    getTasks();
+  }, []);
+
+  async function getTasks() {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:5000/tasks", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      const formattedTasks = data.map((task) => ({
+        ...task,
+        date: task.dueDate,
+      }));
+
+      setTasks(formattedTasks);
+
+    } catch (error) {
+      console.log(error);
+      alert("Failed to load tasks");
+    }
+  }
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 

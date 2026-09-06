@@ -1,67 +1,191 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/notes.css";
 
 function Notes() {
-  const [notes, setNotes] = useState([
-    {
-      id: 1,
-      title: "Machine Learning",
-      content:
-        "Revise supervised learning, unsupervised learning and regression.",
-      date: "September 4, 2026",
-    },
-    {
-      id: 2,
-      title: "Computer Networks",
-      content:
-        "Study OSI model, TCP/IP model and different types of network topology.",
-      date: "September 3, 2026",
-    },
-    {
-      id: 3,
-      title: "DAA",
-      content:
-        "Practice dynamic programming and revise time complexity.",
-      date: "September 2, 2026",
-    },
-  ]);
+
+  const [notes, setNotes] = useState([]);
 
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
+
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingNote, setEditingNote] = useState(null);
 
   const [newNote, setNewNote] = useState({
     title: "",
     content: "",
   });
 
-  function addNote() {
+  useEffect(() => {
+  getNotes();
+  }, []);
+
+  async function getNotes() {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:5000/notes", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      const formattedNotes = data.map((note) => ({
+        ...note,
+        id: note._id,
+      }));
+
+      setNotes(formattedNotes);
+
+    } catch (error) {
+      console.log(error);
+      alert("Failed to load notes");
+    }
+  }
+
+  async function addNote() {
     if (!newNote.title.trim()) {
       return;
     }
 
-    const note = {
-      id: Date.now(),
-      title: newNote.title,
-      content: newNote.content,
-      date: new Date().toLocaleDateString("default", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      }),
-    };
+    try {
+      const token = localStorage.getItem("token");
 
-    setNotes([...notes, note]);
+      const response = await fetch("http://localhost:5000/notes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: newNote.title,
+          content: newNote.content,
+          date: new Date().toLocaleDateString("default", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          }),
+        }),
+      });
 
-    setNewNote({
-      title: "",
-      content: "",
-    });
+      const data = await response.json();
 
-    setShowModal(false);
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      const note = {
+        ...data.note,
+        id: data.note._id,
+      };
+
+      setNotes([...notes, note]);
+
+      setNewNote({
+        title: "",
+        content: "",
+      });
+
+      setShowModal(false);
+
+    } catch (error) {
+      console.log(error);
+      alert("Failed to add note");
+    }
   }
 
-  function deleteNote(id) {
-    setNotes(notes.filter((note) => note.id !== id));
+  function openEditModal(note) {
+    setEditingNote({ ...note });
+    setShowEditModal(true);
+  }
+
+  async function updateNote() {
+    if (!editingNote.title.trim()) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `http://localhost:5000/notes/${editingNote.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            title: editingNote.title,
+            content: editingNote.content,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      const updatedNote = {
+        ...data.note,
+        id: data.note._id,
+      };
+
+      setNotes(
+        notes.map((note) =>
+          note.id === editingNote.id ? updatedNote : note
+        )
+      );
+
+      setShowEditModal(false);
+      setEditingNote(null);
+
+    } catch (error) {
+      console.log(error);
+      alert("Failed to update note");
+    }
+  }
+
+  async function deleteNote(id) {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `http://localhost:5000/notes/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      setNotes(
+        notes.filter((note) => note.id !== id)
+      );
+
+    } catch (error) {
+      console.log(error);
+      alert("Failed to delete note");
+    }
   }
 
   const filteredNotes = notes.filter((note) =>
@@ -109,6 +233,13 @@ function Notes() {
             <div className="note-card" key={note.id}>
               <div className="note-card-top">
                 <h2>{note.title}</h2>
+
+                <button 
+                className="edit-note"
+                onClick={() => openEditModal(note)}>
+                  
+                  ✏️
+                </button>
 
                 <button
                   className="delete-note"
@@ -167,6 +298,56 @@ function Notes() {
                 onClick={addNote}
               >
                 Add Note
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showEditModal && editingNote && (
+        <div className="note-modal-overlay">
+          <div className="note-modal">
+            <h2>Edit Note</h2>
+
+            <input
+              type="text"
+              placeholder="Note title"
+              value={editingNote.title}
+              onChange={(e) =>
+                setEditingNote({
+                  ...editingNote,
+                  title: e.target.value,
+                })
+              }
+            />
+
+            <textarea
+              placeholder="Write your note..."
+              value={editingNote.content}
+              onChange={(e) =>
+                setEditingNote({
+                  ...editingNote,
+                  content: e.target.value,
+                })
+              }
+            />
+
+            <div className="note-modal-actions">
+              <button
+                className="cancel-note"
+                onClick={() => {
+                  setShowEditModal(false);
+                  setEditingNote(null);
+                }}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="save-note"
+                onClick={updateNote}
+              >
+                Save Changes
               </button>
             </div>
           </div>

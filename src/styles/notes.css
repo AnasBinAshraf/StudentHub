@@ -76,10 +76,18 @@
   font-size: 18px;
 }
 
+.edit-note,
 .delete-note {
   border: none;
-  background: none;
+  background: transparent;
   cursor: pointer;
+  font-size: 16px;
+  opacity: 0.6;
+}
+
+.edit-note:hover,
+.delete-note:hover {
+  opacity: 1;
 }
 
 .note-content {
