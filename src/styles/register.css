@@ -3,28 +3,34 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f9fafb;
+  background:
+    radial-gradient(circle at top, rgba(105, 65, 232, 0.1), transparent 40%),
+    linear-gradient(135deg, #f8f9ff, #ffffff);
   padding: 20px;
   box-sizing: border-box;
 }
 
 .register-box {
   width: 400px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e7e9f0;
+  border-radius: 18px;
   padding: 32px;
   box-sizing: border-box;
+  box-shadow: 0 15px 40px rgba(35, 38, 70, 0.08);
 }
 
 .register-box h1 {
   margin: 0;
+  color: #111827;
   font-size: 28px;
+  letter-spacing: -0.5px;
 }
 
 .register-subtitle {
   margin: 8px 0 25px;
   color: #6b7280;
+  line-height: 1.5;
 }
 
 .register-box form {
@@ -34,6 +40,7 @@
 
 .register-box label {
   margin-bottom: 6px;
+  color: #374151;
   font-size: 14px;
   font-weight: 600;
 }
@@ -41,31 +48,41 @@
 .register-box input {
   padding: 12px;
   margin-bottom: 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  border: 1px solid #dfe2ea;
+  border-radius: 9px;
   outline: none;
   font-size: 14px;
   box-sizing: border-box;
+  transition:
+    border 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .register-box input:focus {
-  border-color: #6b7280;
+  border-color: #6941e8;
+  box-shadow: 0 0 0 3px rgba(105, 65, 232, 0.08);
 }
 
 .register-box button {
   padding: 12px;
   margin-top: 4px;
   border: none;
-  border-radius: 8px;
-  background: #111827;
+  border-radius: 10px;
+  background: #6941e8;
   color: white;
   cursor: pointer;
   font-weight: 600;
   font-size: 14px;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .register-box button:hover {
-  background: #1f2937;
+  background: #5128d8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(105, 65, 232, 0.2);
 }
 
 .login-link {
@@ -76,7 +93,11 @@
 }
 
 .login-link a {
-  color: #111827;
+  color: #6941e8;
   font-weight: 600;
   text-decoration: none;
+}
+
+.login-link a:hover {
+  color: #5128d8;
 }
