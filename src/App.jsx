@@ -9,6 +9,8 @@ import Tasks from "./pages/tasks";
 import Calendar from "./pages/calendar";
 import Notes from "./pages/notes";
 import Analytics from "./pages/analytics";
+import Study from "./pages/study";
+import About from "./pages/about";
 
 import DashboardLayout from "./components/dashboardlayout";
 
@@ -34,6 +36,10 @@ function App() {
         <Route path="/notes" element={<Notes />} />
 
         <Route path="/analytics" element={<Analytics />} />
+
+        <Route path="/study" element={<Study />} />
+
+        <Route path="/about" element={<About />} />
 
         </Route>
 

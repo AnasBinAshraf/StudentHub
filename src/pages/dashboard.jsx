@@ -9,9 +9,12 @@ import DeadlineItem from "../components/deadlineitem";
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [notes, setNotes] = useState([]);
+  const [studyTime, setStudyTime] = useState(0);
+  const [weeklyGoal, setWeeklyGoal] = useState(0);
 
   useEffect(() => {
     getTasks();
+    getStudyData();
   }, []);
 
   async function getTasks() {
@@ -35,6 +38,68 @@ function Dashboard() {
     } catch (error) {
       console.log(error);
       alert("Failed to load tasks");
+    }
+  }
+
+  async function getStudyData() {
+    try {
+      const token = localStorage.getItem("token");
+
+      const studyResponse = await fetch(
+        "http://localhost:5000/study",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const studyData = await studyResponse.json();
+
+      const goalResponse = await fetch(
+        "http://localhost:5000/study-goal",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const goalData = await goalResponse.json();
+
+      const today = new Date();
+
+      const day = today.getDay();
+
+      const monday = new Date(today);
+      monday.setDate(
+        today.getDate() - (day === 0 ? 6 : day - 1)
+      );
+      monday.setHours(0, 0, 0, 0);
+
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      sunday.setHours(23, 59, 59, 999);
+
+      const weeklySessions = studyData.filter((session) => {
+        const sessionDate = new Date(session.date);
+
+        return (
+          sessionDate >= monday &&
+          sessionDate <= sunday
+        );
+      });
+
+      const total = weeklySessions.reduce(
+        (sum, session) => sum + session.duration,
+        0
+      );
+
+      setStudyTime(total);
+      setWeeklyGoal((goalData?.weeklyGoal || 0)*60);
+
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -113,6 +178,26 @@ function Dashboard() {
     (task) => task.dueDate === todayDate
   );
 
+  const taskScore =
+    totalTasks === 0
+      ? 0
+      : (completedTasks / totalTasks) * 40;
+
+  const studyScore =
+    weeklyGoal === 0
+      ? 0
+      : Math.min((studyTime / weeklyGoal) * 40, 40);
+
+  const notesScore = totalNotes > 0 ? 10 : 0;
+
+  const goalScore = weeklyGoal > 0 ? 10 : 0;
+
+  const productivity =
+    taskScore +
+    studyScore +
+    notesScore +
+    goalScore;
+
   return (
     <div className="dashboard-page">
 
@@ -159,8 +244,8 @@ function Dashboard() {
 
         <StatCard
           title="Productivity"
-          value={`${completionRate}%`}
-          subtitle="Task completion"
+          value={`${Math.round(productivity)}%`}
+          subtitle="Overall performance"
         />
 
       </section>
@@ -204,7 +289,10 @@ function Dashboard() {
         </div>
 
 
-        <ProgressCard percentage={78} />
+        <ProgressCard
+          studyTime={studyTime}
+          weeklyGoal={weeklyGoal}
+        />
 
       </section>
 

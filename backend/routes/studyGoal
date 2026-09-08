@@ -1,0 +1,48 @@
+const express = require("express");
+const mongoose = require("mongoose");
+const router = express.Router();
+const isLoggedIn = require("../middleware/auth");
+
+const studyGoalSchema = mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user"
+  },
+  weeklyGoal: Number
+});
+
+const studyGoalModel = mongoose.model("studyGoal", studyGoalSchema);
+
+router.post("/", isLoggedIn, async (req, res) => {
+  try {
+    const { weeklyGoal } = req.body;
+
+    const goal = await studyGoalModel.findOneAndUpdate(
+      { userId: req.user.userId },
+      { weeklyGoal },
+      { new: true, upsert: true }
+    );
+
+    res.json(goal);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to save study goal"
+    });
+  }
+});
+
+router.get("/", isLoggedIn, async (req, res) => {
+  try {
+    const goal = await studyGoalModel.findOne({
+      userId: req.user.userId
+    });
+
+    res.json(goal);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to get study goal"
+    });
+  }
+});
+
+module.exports = router;

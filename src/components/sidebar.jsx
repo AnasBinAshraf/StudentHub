@@ -30,9 +30,18 @@ function Sidebar() {
           Analytics
         </NavLink>
 
+        <NavLink to="/study">
+          Study
+        </NavLink>
+
+        <NavLink to="/about">
+          ⓘ About StudentHub
+        </NavLink>
+
       </nav>
 
       <div className="sidebar-bottom">
+
         <button
           className="logout-button"
           onClick={() => {

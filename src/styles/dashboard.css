@@ -254,9 +254,14 @@
   align-items: center;
   justify-content: center;
   position: relative;
+
   background:
     radial-gradient(circle at center, #ffffff 58%, transparent 59%),
-    conic-gradient(#6941e8 0% 78%, #eeeaff 78% 100%);
+    conic-gradient(
+      #6941e8 0% var(--progress),
+      #eeeaff var(--progress) 100%
+    );
+
   box-shadow: 0 10px 30px rgba(105, 65, 232, 0.12);
 }
 
@@ -389,4 +394,28 @@
   .dashboard-header h1 {
     font-size: 28px;
   }
+}
+
+.about-link {
+  display: flex;
+  align-items: center;
+  padding: 11px 14px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.about-link:hover {
+  background: #f3f0ff;
+  color: #6941e8;
+}
+
+.about-link.active {
+  background: #eeeaff;
+  color: #6941e8;
+  font-weight: 600;
 }

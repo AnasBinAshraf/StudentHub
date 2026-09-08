@@ -4,6 +4,8 @@ const cors = require("cors");
 const indexRouter = require("./routes/index");
 const tasksRouter = require("./routes/tasks");
 const notesRouter = require("./routes/notes");
+const studyRouter = require("./routes/study");
+const studyGoalRouter = require("./routes/studyGoal");
 require("dotenv").config();
 
 const app = express();
@@ -13,6 +15,8 @@ app.use(express.json());
 app.use("/", indexRouter);
 app.use("/tasks", tasksRouter);
 app.use("/notes", notesRouter);
+app.use("/study", studyRouter);
+app.use("/study-goal", studyGoalRouter);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(function () {
