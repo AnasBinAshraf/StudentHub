@@ -3,6 +3,8 @@
   padding: 8px 0 40px;
 }
 
+/* Header */
+
 .study-header {
   margin-bottom: 30px;
 }
@@ -11,6 +13,7 @@
   margin: 0 0 6px;
   font-size: 32px;
   color: #25263a;
+  letter-spacing: -0.5px;
 }
 
 .study-header p {
@@ -18,42 +21,65 @@
   color: #777b91;
 }
 
+/* Main Grid */
+
 .study-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: 22px;
 }
 
 .study-card {
   background: linear-gradient(145deg, #ffffff, #faf9ff);
   border: 1px solid #ebe8f7;
-  border-radius: 22px;
-  padding: 28px;
-  box-shadow: 0 10px 28px rgba(35, 38, 70, 0.05);
+  border-radius: 20px;
+  padding: 26px;
+  box-shadow: 0 8px 25px rgba(35, 38, 70, 0.045);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.study-card:hover {
+  border-color: #e0daf8;
+  box-shadow: 0 12px 30px rgba(35, 38, 70, 0.07);
 }
 
 .study-card h2 {
   margin: 0;
   color: #292a3d;
+  font-size: 19px;
 }
 
-/* Study Timer */
+/* =========================
+   Study Timer
+========================= */
 
 .timer-card {
   min-height: 315px;
+  display: flex;
+  flex-direction: column;
 }
 
 .timer-card input {
   width: 100%;
   box-sizing: border-box;
-  margin-top: 22px;
-  padding: 14px 16px;
+  margin-top: 20px;
+  padding: 13px 15px;
   border: 1px solid #e0deeb;
-  border-radius: 12px;
+  border-radius: 11px;
   outline: none;
-  font-size: 15px;
+  font-size: 14px;
   background: #ffffff;
   color: #292a3d;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.timer-card input::placeholder {
+  color: #a0a2b0;
 }
 
 .timer-card input:focus {
@@ -62,53 +88,68 @@
 }
 
 .study-timer {
-  margin: 32px 0 27px;
+  margin: 30px 0 26px;
   text-align: center;
   font-size: 52px;
   font-weight: 700;
   letter-spacing: 3px;
   color: #6941e8;
+  font-variant-numeric: tabular-nums;
 }
 
 .timer-buttons,
 .pomodoro-buttons {
   display: flex;
-  gap: 12px;
+  gap: 10px;
+  margin-top: auto;
 }
 
 .timer-buttons button,
 .pomodoro-buttons button {
   flex: 1;
-  padding: 13px;
+  min-height: 42px;
+  padding: 0 14px;
   border: none;
-  border-radius: 11px;
+  border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .start-button {
   background: #6941e8;
   color: #ffffff;
-  box-shadow: 0 7px 16px rgba(105, 65, 232, 0.2);
+  box-shadow: 0 6px 15px rgba(105, 65, 232, 0.18);
 }
 
 .start-button:hover {
-  background: #5128d8;
-  transform: translateY(-2px);
+  background: #5832d4;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(105, 65, 232, 0.22);
+}
+
+.start-button:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .finish-button {
-  background: #f0edff;
+  background: #f1eeff;
   color: #6941e8;
 }
 
 .finish-button:hover {
-  background: #e6e1ff;
+  background: #e7e2ff;
+  transform: translateY(-1px);
 }
 
-/* Pomodoro */
+/* =========================
+   Pomodoro
+========================= */
 
 .pomodoro-card {
   min-height: 315px;
@@ -124,37 +165,41 @@
 }
 
 .pomodoro-header p {
-  margin: 7px 0 0;
+  margin: 6px 0 0;
   color: #85889b;
   font-size: 13px;
 }
 
 .pomodoro-badge {
-  padding: 6px 10px;
+  padding: 6px 11px;
   border-radius: 20px;
   background: #f0edff;
   color: #6941e8;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 650;
+  white-space: nowrap;
 }
 
 .pomodoro-timer {
-  margin-top: 35px;
+  margin-top: 32px;
   text-align: center;
   font-size: 54px;
   font-weight: 700;
   letter-spacing: 3px;
   color: #6941e8;
+  font-variant-numeric: tabular-nums;
 }
 
 .pomodoro-label {
-  margin: 7px 0 25px;
+  margin: 7px 0 24px;
   text-align: center;
   color: #777b91;
   font-size: 14px;
 }
 
-/* Weekly Progress */
+/* =========================
+   Weekly Progress
+========================= */
 
 .progress-card {
   min-height: 190px;
@@ -165,8 +210,8 @@
 
 .study-progress {
   width: 100%;
-  height: 11px;
-  margin: 28px 0 14px;
+  height: 10px;
+  margin: 25px 0 14px;
   background: #eeeef5;
   border-radius: 20px;
   overflow: hidden;
@@ -176,7 +221,7 @@
   height: 100%;
   background: #6941e8;
   border-radius: 20px;
-  transition: width 0.4s ease;
+  transition: width 0.5s ease;
 }
 
 .study-progress-text {
@@ -188,20 +233,24 @@
 .study-progress-text strong {
   font-size: 27px;
   color: #292a3d;
+  font-weight: 700;
 }
 
 .study-progress-text span {
   color: #777b91;
-}
-
-.progress-card > p {
-  margin-top: 12px;
-  color: #777b91;
-  line-height: 1.5;
   font-size: 14px;
 }
 
-/* Weekly Goal */
+.progress-card > p {
+  margin: 10px 0 0;
+  color: #777b91;
+  line-height: 1.5;
+  font-size: 13px;
+}
+
+/* =========================
+   Weekly Goal
+========================= */
 
 .goal-card {
   min-height: 190px;
@@ -224,12 +273,12 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 21px;
+  margin-top: 20px;
 }
 
 .goal-input input {
   width: 90px;
-  height: 42px;
+  height: 40px;
   box-sizing: border-box;
   padding: 0 12px;
   border: 1px solid #dedbea;
@@ -237,7 +286,10 @@
   outline: none;
   background: #ffffff;
   color: #292a3d;
-  font-size: 15px;
+  font-size: 14px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .goal-input input:focus {
@@ -252,26 +304,30 @@
 
 .goal-input button {
   margin-left: auto;
-  height: 42px;
-  padding: 0 18px;
+  height: 40px;
+  padding: 0 17px;
   border: none;
   border-radius: 10px;
   background: #6941e8;
   color: #ffffff;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .goal-input button:hover {
-  background: #5128d8;
+  background: #5832d4;
   transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(105, 65, 232, 0.18);
 }
 
 .current-goal {
-  margin-top: 17px !important;
-  padding-top: 13px;
+  margin-top: 16px !important;
+  padding-top: 12px;
   border-top: 1px solid #e9e5f4;
   color: #777b91 !important;
 }
@@ -280,7 +336,9 @@
   color: #6941e8;
 }
 
-/* Recent Sessions */
+/* =========================
+   Recent Sessions
+========================= */
 
 .sessions-section {
   width: 100%;
@@ -289,12 +347,13 @@
 }
 
 .sessions-header {
-  margin-bottom: 17px;
+  margin-bottom: 16px;
 }
 
 .sessions-header h2 {
   margin: 0 0 5px;
   color: #292a3d;
+  font-size: 20px;
 }
 
 .sessions-header p {
@@ -312,23 +371,26 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  padding: 17px 8px;
+  padding: 16px 8px;
   border-bottom: 1px solid #ececf2;
-  transition: 0.2s ease;
+  border-radius: 8px;
+  transition:
+    background 0.2s ease,
+    padding-left 0.2s ease;
 }
 
 .session-item:hover {
   padding-left: 14px;
   background: linear-gradient(
     90deg,
-    rgba(105, 65, 232, 0.04),
+    rgba(105, 65, 232, 0.045),
     transparent
   );
 }
 
 .session-dot {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   flex-shrink: 0;
   border-radius: 50%;
   background: #6941e8;
@@ -337,12 +399,14 @@
 
 .session-info {
   flex: 1;
+  min-width: 0;
 }
 
 .session-info strong {
   display: block;
   color: #292a3d;
   font-size: 15px;
+  font-weight: 650;
 }
 
 .session-info span {
@@ -359,29 +423,55 @@
 }
 
 .session-duration > strong {
+  min-width: 55px;
   color: #6941e8;
   font-size: 14px;
-  min-width: 55px;
   text-align: right;
 }
 
-.edit-session-button {
+/* Session Actions */
+
+.session-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.edit-session-button,
+.delete-session-button {
   width: 32px;
   height: 32px;
   border: none;
   border-radius: 9px;
-  background: #f5f3ff;
   cursor: pointer;
   opacity: 0;
-  transition: 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
-.session-item:hover .edit-session-button {
+.edit-session-button {
+  background: #f5f3ff;
+}
+
+.delete-session-button {
+  background: #fff0f0;
+}
+
+.session-item:hover .edit-session-button,
+.session-item:hover .delete-session-button {
   opacity: 1;
 }
 
 .edit-session-button:hover {
   background: #e9e4ff;
+  transform: translateY(-1px);
+}
+
+.delete-session-button:hover {
+  background: #ffe0e0;
+  transform: translateY(-1px);
 }
 
 /* Editing */
@@ -398,10 +488,13 @@
   border: 1px solid #dcd9ea;
   border-radius: 8px;
   outline: none;
+  color: #292a3d;
+  background: #ffffff;
 }
 
 .edit-session input:focus {
   border-color: #6941e8;
+  box-shadow: 0 0 0 3px rgba(105, 65, 232, 0.07);
 }
 
 .edit-session button {
@@ -414,17 +507,33 @@
   font-weight: 600;
 }
 
+.edit-session button:hover {
+  background: #5832d4;
+}
+
 .edit-session .cancel-edit {
   background: #eeeef5;
   color: #55586b;
 }
+
+.edit-session .cancel-edit:hover {
+  background: #e5e5ee;
+}
+
+/* Empty State */
 
 .no-sessions {
   padding: 30px 8px;
   color: #85889b;
 }
 
-/* Responsive */
+.no-sessions p {
+  margin: 0;
+}
+
+/* =========================
+   Responsive
+========================= */
 
 @media (max-width: 850px) {
   .study-grid {
@@ -447,11 +556,13 @@
 
   .study-card {
     padding: 22px;
+    border-radius: 18px;
   }
 
   .study-timer,
   .pomodoro-timer {
     font-size: 42px;
+    letter-spacing: 2px;
   }
 
   .goal-input {
@@ -466,34 +577,24 @@
   .session-item {
     gap: 10px;
   }
-}
 
-.session-actions {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
+  .session-duration {
+    gap: 7px;
+  }
 
-.delete-session-button {
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 9px;
-  background: #fff0f0;
-  cursor: pointer;
-  opacity: 0;
-  transition: 0.2s ease;
-}
+  .session-duration > strong {
+    min-width: auto;
+  }
 
-.session-item:hover .delete-session-button {
-  opacity: 1;
-}
+  .edit-session {
+    flex-wrap: wrap;
+  }
 
-.delete-session-button:hover {
-  background: #ffe0e0;
-}
+  .edit-session input {
+    width: 100%;
+  }
 
-.about-link span:first-child {
-  margin-right: 10px;
-  font-size: 16px;
+  .edit-session button {
+    flex: 1;
+  }
 }

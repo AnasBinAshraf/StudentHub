@@ -11,10 +11,15 @@ function Dashboard() {
   const [notes, setNotes] = useState([]);
   const [studyTime, setStudyTime] = useState(0);
   const [weeklyGoal, setWeeklyGoal] = useState(0);
+  const [pomodoros, setPomodoros] = useState([]);
+  const [subjectGoals, setSubjectGoals] = useState([]);
+  const [studySessions, setStudySessions] = useState([]);
 
   useEffect(() => {
     getTasks();
     getStudyData();
+    getPomodoros();
+    getSubjectGoals();
   }, []);
 
   async function getTasks() {
@@ -55,6 +60,8 @@ function Dashboard() {
       );
 
       const studyData = await studyResponse.json();
+      setStudySessions(studyData);
+      
 
       const goalResponse = await fetch(
         "http://localhost:5000/study-goal",
@@ -131,6 +138,56 @@ function Dashboard() {
     }
   }
 
+  async function getPomodoros() {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        "http://localhost:5000/pomodoro",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return;
+      }
+
+      setPomodoros(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function getSubjectGoals() {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        "http://localhost:5000/subject-goals",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return;
+      }
+
+      setSubjectGoals(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const totalTasks = tasks.length;
 
   const completedTasks = tasks.filter(
@@ -179,25 +236,98 @@ function Dashboard() {
   );
 
   const taskScore =
-    totalTasks === 0
-      ? 0
-      : (completedTasks / totalTasks) * 40;
+  totalTasks === 0
+    ? 0
+    : Math.min((completedTasks / totalTasks) * 30, 30);
 
-  const studyScore =
-    weeklyGoal === 0
-      ? 0
-      : Math.min((studyTime / weeklyGoal) * 40, 40);
+const studyScore =
+  weeklyGoal === 0
+    ? 0
+    : Math.min((studyTime / weeklyGoal) * 30, 30);
 
-  const notesScore = totalNotes > 0 ? 10 : 0;
+const day = today.getDay();
 
-  const goalScore = weeklyGoal > 0 ? 10 : 0;
+const monday = new Date(today);
 
-  const productivity =
-    taskScore +
-    studyScore +
-    notesScore +
-    goalScore;
+monday.setDate(
+  today.getDate() - (day === 0 ? 6 : day - 1)
+);
 
+monday.setHours(0, 0, 0, 0);
+
+const sunday = new Date(monday);
+
+sunday.setDate(monday.getDate() + 6);
+sunday.setHours(23, 59, 59, 999);
+
+const weeklyPomodoros = pomodoros.filter((pomodoro) => {
+  const pomodoroDate = new Date(pomodoro.date);
+
+  return (
+    pomodoroDate >= monday &&
+    pomodoroDate <= sunday
+  );
+});
+
+const pomodoroScore = Math.min(
+  (weeklyPomodoros.length / 5) * 15,
+  15
+);
+
+let subjectGoalScore = 0;
+
+const subjectProgress = [];
+
+subjectGoals.forEach((goal) => {
+  if (goal.goalMinutes <= 0) {
+    return;
+  }
+
+  const studiedMinutes = studySessions
+    .filter((session) => {
+      const sessionDate = new Date(session.date);
+
+      return (
+        session.subject === goal.subject &&
+        sessionDate >= monday &&
+        sessionDate <= sunday
+      );
+    })
+    .reduce(
+      (sum, session) => sum + session.duration,
+      0
+    );
+
+  const progress =
+    studiedMinutes / goal.goalMinutes;
+
+  subjectProgress.push(
+    Math.min(progress, 1)
+  );
+});
+
+if (subjectProgress.length > 0) {
+  const averageProgress =
+    subjectProgress.reduce(
+      (sum, progress) => sum + progress,
+      0
+    ) / subjectProgress.length;
+
+  subjectGoalScore =
+    averageProgress * 15;
+}
+
+const notesScore = Math.min(
+  (totalNotes / 5) * 10,
+  10
+);
+
+const productivity =
+  taskScore +
+  studyScore +
+  pomodoroScore +
+  subjectGoalScore +
+  notesScore;
   return (
     <div className="dashboard-page">
 

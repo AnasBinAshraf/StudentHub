@@ -132,6 +132,7 @@ function Study() {
 
             if (remaining <= 0) {
             if (pomodoroMode === "Focus") {
+                savePomodoroCompletion();
                 setPomodoroMode("Break");
                 setPomodoroSeconds(5 * 60);
 
@@ -309,6 +310,33 @@ function Study() {
       String(secs).padStart(2, "0")
     );
   }
+
+  async function savePomodoroCompletion() {
+    try {
+        const today = new Date();
+
+        const date =
+        today.getFullYear() +
+        "-" +
+        String(today.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(today.getDate()).padStart(2, "0");
+
+        await fetch("http://localhost:5000/pomodoro", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            duration: 25,
+            date
+        })
+        });
+    } catch (error) {
+        console.log(error);
+    }
+    }
 
   function togglePomodoro() {
     if (pomodoroRunning) {

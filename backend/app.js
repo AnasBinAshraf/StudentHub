@@ -7,6 +7,7 @@ const notesRouter = require("./routes/notes");
 const studyRouter = require("./routes/study");
 const studyGoalRouter = require("./routes/studyGoal");
 const SubjectGoal = require("./routes/SubjectGoal");
+const pomodoroRouter = require("./routes/pomodoro");
 require("dotenv").config();
 
 const app = express();
@@ -19,6 +20,7 @@ app.use("/notes", notesRouter);
 app.use("/study", studyRouter);
 app.use("/study-goal", studyGoalRouter);
 app.use("/subject-goals", SubjectGoal);
+app.use("/pomodoro", pomodoroRouter);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(function () {
