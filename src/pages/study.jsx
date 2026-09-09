@@ -20,43 +20,141 @@ function Study() {
 
   const token = localStorage.getItem("token");
 
-  useEffect(() => {
+    useEffect(() => {
+    const savedStartTime = localStorage.getItem("studyStartTime");
+    const savedSeconds = localStorage.getItem("studySeconds");
+    const savedSubject = localStorage.getItem("studySubject");
+
+    if (savedStartTime) {
+        setSeconds(
+        Number(savedSeconds || 0) +
+            Math.floor((Date.now() - Number(savedStartTime)) / 1000)
+        );
+
+        setRunning(true);
+    }
+
+    if (savedSubject) {
+        setSubject(savedSubject);
+    }
+    }, []);
+
+    useEffect(() => {
     let timer;
 
     if (running) {
-      timer = setInterval(() => {
-        setSeconds((prev) => prev + 1);
-      }, 1000);
+        timer = setInterval(() => {
+        const startTime = localStorage.getItem("studyStartTime");
+        const savedSeconds = Number(
+            localStorage.getItem("studySeconds") || 0
+        );
+
+        if (startTime) {
+            const elapsed = Math.floor(
+            (Date.now() - Number(startTime)) / 1000
+            );
+
+            setSeconds(savedSeconds + elapsed);
+        }
+        }, 1000);
     }
 
     return () => clearInterval(timer);
-  }, [running]);
+    }, [running]);
 
   useEffect(() => {
+  const savedRunning = localStorage.getItem("pomodoroRunning");
+  const savedMode = localStorage.getItem("pomodoroMode");
+  const savedSeconds = localStorage.getItem("pomodoroSeconds");
+  const savedStartTime = localStorage.getItem("pomodoroStartTime");
+
+  if (savedMode) {
+    setPomodoroMode(savedMode);
+  }
+
+  if (savedSeconds) {
+    setPomodoroSeconds(Number(savedSeconds));
+  }
+
+  if (savedRunning === "true" && savedStartTime) {
+    const elapsed = Math.floor(
+      (Date.now() - Number(savedStartTime)) / 1000
+    );
+
+    const startingSeconds = Number(savedSeconds || 0);
+    const remaining = startingSeconds - elapsed;
+
+    if (remaining > 0) {
+      setPomodoroSeconds(remaining);
+      setPomodoroRunning(true);
+    } else {
+      if (savedMode === "Focus") {
+        setPomodoroMode("Break");
+        setPomodoroSeconds(5 * 60);
+      } else {
+        setPomodoroMode("Focus");
+        setPomodoroSeconds(25 * 60);
+      }
+
+      localStorage.setItem(
+        "pomodoroSeconds",
+        savedMode === "Focus" ? 5 * 60 : 25 * 60
+      );
+
+      localStorage.setItem(
+        "pomodoroMode",
+        savedMode === "Focus" ? "Break" : "Focus"
+      );
+
+      localStorage.setItem("pomodoroStartTime", Date.now());
+
+      setPomodoroRunning(true);
+    }
+  }
+}, []);
+
+    useEffect(() => {
     let timer;
 
     if (pomodoroRunning) {
-      timer = setInterval(() => {
-        setPomodoroSeconds((prev) => {
-          if (prev <= 1) {
-            setPomodoroRunning(false);
+        timer = setInterval(() => {
+        const startTime = localStorage.getItem("pomodoroStartTime");
+        const savedSeconds = Number(
+            localStorage.getItem("pomodoroSeconds") || 0
+        );
 
+        if (startTime) {
+            const elapsed = Math.floor(
+            (Date.now() - Number(startTime)) / 1000
+            );
+
+            const remaining = savedSeconds - elapsed;
+
+            if (remaining <= 0) {
             if (pomodoroMode === "Focus") {
-              setPomodoroMode("Break");
-              return 5 * 60;
-            } else {
-              setPomodoroMode("Focus");
-              return 25 * 60;
-            }
-          }
+                setPomodoroMode("Break");
+                setPomodoroSeconds(5 * 60);
 
-          return prev - 1;
-        });
-      }, 1000);
+                localStorage.setItem("pomodoroMode", "Break");
+                localStorage.setItem("pomodoroSeconds", 5 * 60);
+                localStorage.setItem("pomodoroStartTime", Date.now());
+            } else {
+                setPomodoroMode("Focus");
+                setPomodoroSeconds(25 * 60);
+
+                localStorage.setItem("pomodoroMode", "Focus");
+                localStorage.setItem("pomodoroSeconds", 25 * 60);
+                localStorage.setItem("pomodoroStartTime", Date.now());
+            }
+            } else {
+            setPomodoroSeconds(remaining);
+            }
+        }
+        }, 1000);
     }
 
     return () => clearInterval(timer);
-  }, [pomodoroRunning, pomodoroMode]);
+    }, [pomodoroRunning, pomodoroMode]);
 
   useEffect(() => {
     getGoal();
@@ -212,16 +310,68 @@ function Study() {
     );
   }
 
+  function togglePomodoro() {
+    if (pomodoroRunning) {
+        const startTime = localStorage.getItem("pomodoroStartTime");
+        const savedSeconds = Number(
+        localStorage.getItem("pomodoroSeconds") || pomodoroSeconds
+        );
+
+        let currentSeconds = savedSeconds;
+
+        if (startTime) {
+        const elapsed = Math.floor(
+            (Date.now() - Number(startTime)) / 1000
+        );
+
+        currentSeconds = Math.max(savedSeconds - elapsed, 0);
+        }
+
+        setPomodoroSeconds(currentSeconds);
+        setPomodoroRunning(false);
+
+        localStorage.setItem("pomodoroSeconds", currentSeconds);
+        localStorage.setItem("pomodoroRunning", "false");
+        localStorage.removeItem("pomodoroStartTime");
+
+        return;
+    }
+
+    localStorage.setItem("pomodoroMode", pomodoroMode);
+    localStorage.setItem("pomodoroSeconds", pomodoroSeconds);
+    localStorage.setItem("pomodoroStartTime", Date.now());
+    localStorage.setItem("pomodoroRunning", "true");
+
+    setPomodoroRunning(true);
+    }
+
+    function togglePomodoroMode() {
+    const newMode = pomodoroMode === "Focus" ? "Break" : "Focus";
+
+    const newSeconds = newMode === "Focus" ? 25 * 60 : 5 * 60;
+
+    setPomodoroMode(newMode);
+    setPomodoroSeconds(newSeconds);
+    setPomodoroRunning(true);
+
+    localStorage.setItem("pomodoroMode", newMode);
+    localStorage.setItem("pomodoroSeconds", newSeconds);
+    localStorage.setItem("pomodoroStartTime", Date.now());
+    localStorage.setItem("pomodoroRunning", "true");
+    }
+
   function resetPomodoro() {
     setPomodoroRunning(false);
 
-    if (pomodoroMode === "Focus") {
-      setPomodoroSeconds(25 * 60);
-    } else {
-      setPomodoroSeconds(5 * 60);
-    }
-  }
+    const resetSeconds =
+        pomodoroMode === "Focus" ? 25 * 60 : 5 * 60;
 
+    setPomodoroSeconds(resetSeconds);
+
+    localStorage.setItem("pomodoroRunning", "false");
+    localStorage.setItem("pomodoroSeconds", resetSeconds);
+    localStorage.removeItem("pomodoroStartTime");
+    }
   async function deleteSession(id) {
     try {
         const response = await fetch(
@@ -242,6 +392,37 @@ function Study() {
     } catch (error) {
         console.log(error);
     }
+    }
+
+  function toggleTimer() {
+    if (running) {
+        const startTime = localStorage.getItem("studyStartTime");
+        const savedSeconds = Number(
+        localStorage.getItem("studySeconds") || 0
+        );
+
+        let currentSeconds = seconds;
+
+        if (startTime) {
+        currentSeconds =
+            savedSeconds +
+            Math.floor((Date.now() - Number(startTime)) / 1000);
+        }
+
+        setSeconds(currentSeconds);
+        setRunning(false);
+
+        localStorage.setItem("studySeconds", currentSeconds);
+        localStorage.removeItem("studyStartTime");
+
+        return;
+    }
+
+    localStorage.setItem("studyStartTime", Date.now());
+    localStorage.setItem("studySeconds", seconds);
+    localStorage.setItem("studySubject", subject);
+
+    setRunning(true);
     }
 
   async function finishSession() {
@@ -273,9 +454,13 @@ function Study() {
         })
       });
 
-      setSeconds(0);
-      setRunning(false);
-      setSubject("");
+        setSeconds(0);
+        setRunning(false);
+        setSubject("");
+
+        localStorage.removeItem("studyStartTime");
+        localStorage.removeItem("studySeconds");
+        localStorage.removeItem("studySubject");
 
       getStudyTime();
     } catch (error) {
@@ -311,7 +496,10 @@ function Study() {
             type="text"
             placeholder="Enter subject"
             value={subject}
-            onChange={(e) => setSubject(e.target.value)}
+            onChange={(e) => {
+                setSubject(e.target.value);
+                localStorage.setItem("studySubject", e.target.value);
+            }}
           />
 
           <div className="study-timer">
@@ -321,7 +509,7 @@ function Study() {
           <div className="timer-buttons">
             <button
               className="start-button"
-              onClick={() => setRunning(!running)}
+              onClick={toggleTimer}
             >
               {running ? "Pause" : "Start"}
             </button>
@@ -360,22 +548,29 @@ function Study() {
           </div>
 
           <div className="pomodoro-buttons">
-            <button
-              className="start-button"
-              onClick={() =>
-                setPomodoroRunning(!pomodoroRunning)
-              }
-            >
-              {pomodoroRunning ? "Pause" : "Start"}
-            </button>
 
-            <button
-              className="finish-button"
-              onClick={resetPomodoro}
-            >
-              Reset
-            </button>
-          </div>
+                <button
+                    className="start-button"
+                    onClick={togglePomodoro}
+                >
+                    {pomodoroRunning ? "Pause" : "Start"}
+                </button>
+
+                <button
+                className="finish-button"
+                onClick={togglePomodoroMode}
+                >
+                {pomodoroMode === "Focus" ? "Break" : "Focus"}
+                </button>
+
+                <button
+                    className="finish-button"
+                    onClick={resetPomodoro}
+                >
+                    Reset
+                </button>
+
+            </div>
         </div>
 
         {/* Weekly Progress */}
